@@ -1,0 +1,5 @@
+--python-kinds=-i
+--exclude=*dashboard/ukubona/node_modules*
+--exclude=*virtualenv*
+--exclude=*venv*
+--exclude=*.pem

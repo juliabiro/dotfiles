@@ -1,0 +1,11 @@
+[^.]*
+.*
+
+# explicitly include
+!.spacemacs
+!.emacs.d/*
+!.config
+!.vim
+!.vimrc
+!.ctags
+!.git
