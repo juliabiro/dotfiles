@@ -291,6 +291,8 @@ you should place your code here."
   (setq-default tab-width 2); a tab is 2 spaces wide
   (setq-default js2-basic-offset 2
                 js-indent-level 2)
+  (setq javascript-indent-level 2)
+  (setq typescript-indent-level 2)
   (setq-default TeX-engine 'xetex)
   (setq system-uses-terminfo nil)
   (setq python-shell-interpreter "python3")
