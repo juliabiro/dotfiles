@@ -11,7 +11,7 @@
 !.omf
 !.profile.fish
 !.alias.fish
-!.config/omf
-!.config/fish
-!.config/iterm2
-!.config/gh
+!.config/omf/.*
+!.config/fish/.*
+!.config/iterm2/.*
+!.config/gh/.*
