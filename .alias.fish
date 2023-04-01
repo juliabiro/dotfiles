@@ -60,4 +60,6 @@ function fix_camera
   sudo killall VDCAssistant
 end
 
-. .contentful_alias.fish
+if test -e .contentful_alias.fish
+   source .contentful_alias.fish
+end
