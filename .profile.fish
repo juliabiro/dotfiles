@@ -6,7 +6,7 @@ set -x HAXE_STD_PATH /usr/local/lib/haxe-3.1.3
 
 #set -x PATH $PATH $HOME/.rvm/bin # Add RVM to PATH for scripting
 #set -x PATH $PATH $HOME/.emacs.d/ical2org.awk # Add ical2org script
-set -x PATH /usr/local/bin /usr/local/Cellar/go/1.19.3/bin $PATH
+set -x PATH /usr/local/bin /usr/local/Cellar/go/1.19.3/bin /opt/homebrew/bin $PATH
 set -x PATH $PATH /Users/julia.biro/go/bin/
 #set -x PATH $PATH /Library/TeX/texbin/
 #set -x PATH $PATH /Library/Frameworks/Python.framework/Versions/2.7/bin/
