@@ -22,7 +22,7 @@ set -x PATH $PATH /Users/julia.biro/go/src/github.com/juliabiro/kubectl_mux
 
 set -x AWS_CREDENTIAL_FILE $HOME/.aws/credentials
 
-# kubectl config use-context minikube
+#kubectl config use-context minikube
 
 set -x EDITOR emacsclient
 #set -x  python2 /usr/bin/python
