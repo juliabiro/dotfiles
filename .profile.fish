@@ -10,7 +10,7 @@ set -x PATH /usr/local/bin /usr/local/Cellar/go/1.19.3/bin /opt/homebrew/bin $PA
 set -x PATH $PATH $HOME/go/bin/
 #set -x PATH $PATH /Library/TeX/texbin/
 #set -x PATH $PATH /Library/Frameworks/Python.framework/Versions/2.7/bin/
-set -x PATH $PATH /usr/local/opt/libpq/bin 
+set -x PATH $PATH /usr/local/opt/libpq/bin
 
 set -x PATH $PATH /Applications/
 # expander
