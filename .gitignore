@@ -13,7 +13,6 @@
 !.config/omf
 !.config/fish
 !.config/iterm2
-!.config/gh/config.yaml
 !.config/omf/*
 !.config/fish/*
 !com.googlecode.iterm2.plist
