@@ -63,6 +63,7 @@ values."
       syntax-checking
       version-control
       colors
+      jsonne 
       )
 
    ;; List of additional packages that will installed without being
