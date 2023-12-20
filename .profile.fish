@@ -32,10 +32,10 @@ set -x EDITOR emacsclient
 set -x KUBEBUILDER_ASSETS /usr/local/share/kubebuilder
 
 # source credentials
-if test -e .credentials.fish
-    source .credentials.fish
+if test -e ~/.credentials.fish
+    source ~/.credentials.fish
 end
 
-if test -e .contentful_setup.fish
-    source .contentful_setup.fish
+if test -e ~/.contentful_setup.fish
+    source ~/.contentful_setup.fish
 end
