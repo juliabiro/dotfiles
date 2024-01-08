@@ -26,7 +26,6 @@ values."
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
      geolocation
-     github
      rust
      csv
      typescript
@@ -63,7 +62,7 @@ values."
       syntax-checking
       version-control
       colors
-      jsonne 
+      jsonnet 
       )
 
    ;; List of additional packages that will installed without being
