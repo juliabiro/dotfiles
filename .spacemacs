@@ -30,40 +30,43 @@ values."
      csv
      typescript
      go
+     (go :variables go-backend 'lsp
+         godoc-at-point-function 'godoc-gogetdoc
+         go-run-command "go run")
      ruby
      ruby-on-rails
      shell-scripts
      fzf
      lua
      yaml
-      auto-completion
-      better-defaults
-      emacs-lisp
-      javascript
-      html
-      games
-      git
-      docker
-      markdown
-      (markdown :variables markdown-live-preview-engine 'vmd)
-      org
-      terraform
-      ;;groovy
-      (latex :variables latex-build-command "LaTeX")
-      react
-      python
-      restclient
-      shell
-      (shell :variables shell-default-shell 'ansi-term
-             shell-default-position 'bottom
-             shell-default-height 35
-             shell-default-full-span nil)
-      spell-checking
-      syntax-checking
-      version-control
-      colors
-      jsonnet 
-      )
+     auto-completion
+     better-defaults
+     emacs-lisp
+     javascript
+     html
+     games
+     git
+     docker
+     markdown
+     (markdown :variables markdown-live-preview-engine 'vmd)
+     org
+     terraform
+     ;;groovy
+     (latex :variables latex-build-command "LaTeX")
+     react
+     python
+     restclient
+     shell
+     (shell :variables shell-default-shell 'ansi-term
+            shell-default-position 'bottom
+            shell-default-height 35
+            shell-default-full-span nil)
+     spell-checking
+     syntax-checking
+     version-control
+     colors
+     jsonnet
+     )
 
    ;; List of additional packages that will installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -73,9 +76,10 @@ values."
                                       (groovy-mode :location elpa)
                                       (org-autolist :location: melpa)
                                       (org-pretty-tags)
-   )
+                                      )
    ;; A list of packages and/or extensions that will not be install and loaded.
    dotspacemacs-excluded-packages '()
+   dotspacemacs-install-packages 'used-only
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
    
    ;; are declared in a layer which is not a member of
@@ -123,7 +127,7 @@ values."
    ;; List of items to show in the startup buffer. If nil it is disabled.
    ;; Possible values are: `recents' `bookmarks' `projects'.
    ;; (default '(recents projects))
-   dotspacemacs-startup-lists '(recents projects)
+   dotspacemacs-startup-lists '(( recents ) ( projects ))
    ;; Number of recent files to show in the startup buffer. Ignored if
    ;; `dotspacemacs-startup-lists' doesn't include `recents'. (default 5)
    dotspacemacs-startup-recent-list-size 5
@@ -279,8 +283,8 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
-  ;(add-hook 'org-mode-hook (lambda () (org-autoheading-mode)))
-)
+                                        ;(add-hook 'org-mode-hook (lambda () (org-autoheading-mode)))
+  )
 
 (defun dotspacemacs/user-config ()
   "Configuration function for user code.
