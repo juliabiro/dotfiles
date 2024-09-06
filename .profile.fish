@@ -40,4 +40,4 @@ if test -e ~/.contentful_setup.fish
     source ~/.contentful_setup.fish
 end
 
-~/notification_placer.applescript &
+~/notification_starter.sh

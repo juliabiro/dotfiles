@@ -16,7 +16,7 @@ tell application "System Events"
                     end repeat
                 end try
             end if
-            delay 0.5 -- Consider adjusting this based on how responsive it needs to be
+            delay 0.7 -- Consider adjusting this based on how responsive it needs to be
         end repeat
     end tell
 end tell

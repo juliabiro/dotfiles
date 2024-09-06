@@ -81,7 +81,7 @@ values."
    ;; are declared in a layer which is not a member of
    ;; the list `dotspacemacs-configuration-layers'. (default t)
    dotspacemacs-delete-orphan-packages t)
-  (global-undo-tree-mode)
+  ;;(global-undo-tree-mode)
   (evil-set-undo-system 'undo-tree)
   )
 
