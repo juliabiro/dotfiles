@@ -17,5 +17,6 @@
 !.config/fish/*
 !com.googlecode.iterm2.plist
 !notification_placer.applescript
+!notification_starter.sh
 
 .config/fish/fish_history
