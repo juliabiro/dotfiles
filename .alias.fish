@@ -29,13 +29,14 @@ alias em="emacsclient"
 alias sed="gsed"
 alias find='gfind'
 alias kctl='kubectl'
-alias k='kubectl_context'
+alias k='kubectl'
+#alias k='kubectl_context'
 alias pfw='kubectl port-forward'
 
 
-function kubectl_context
-    kubectl $argv[1..-2] --context ( expander ex "$argv[-1]" )
-end
+# function kubectl_context
+#     kubectl $argv[1..-2] --context ( expander ex "$argv[-1]" )
+# end
 
 function git_push_new
   git push --set-upstream origin (git rev-parse --abbrev-ref HEAD)
@@ -60,6 +61,3 @@ function fix_camera
   sudo killall VDCAssistant
 end
 
-if test -e .contentful_alias.fish
-   source .contentful_alias.fish
-end
