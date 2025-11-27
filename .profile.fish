@@ -40,4 +40,6 @@ if test -e ~/.contentful_setup.fish
     source ~/.contentful_setup.fish
 end
 
-~/notification_starter.sh
+if not pgrep -f notification_placer.applescript > /dev/null
+  ~/notification_placer.applescript &
+end
