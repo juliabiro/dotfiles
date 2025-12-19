@@ -26,7 +26,7 @@ set -x AWS_CREDENTIAL_FILE $HOME/.aws/credentials
 set -x EDITOR emacsclient
 #set -x  python2 /usr/bin/python
 
-#kubectl config use-context "NULL"
+kubectl config use-context gke_kombo-staging_europe-north2-a_kombo-cluster-eun2
 
 set -x KUBEBUILDER_ASSETS /usr/local/share/kubebuilder
 
