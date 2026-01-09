@@ -13,13 +13,13 @@ set -x PATH $PATH /usr/local/opt/libpq/bin
 
 set -x PATH $PATH /Applications/
 # expander
-set -x PATH $PATH /$HOME/go/src/github.com/juliabiro/expander
-set -x EXPANDER_CONF /$HOME/.kube/expander_conf.json
+#set -x PATH $PATH /$HOME/go/src/github.com/juliabiro/expander
+#set -x EXPANDER_CONF /$HOME/.kube/expander_conf.json
 
 # kmux
 set -x PATH $PATH /$HOME/go/src/github.com/juliabiro/kubectl_mux
 
-set -x AWS_CREDENTIAL_FILE $HOME/.aws/credentials
+#set -x AWS_CREDENTIAL_FILE $HOME/.aws/credentials
 
 #kubectl config use-context minikube
 
