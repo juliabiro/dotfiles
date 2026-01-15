@@ -19,6 +19,9 @@ set -x PATH $PATH /Applications/
 # kmux
 set -x PATH $PATH /$HOME/go/src/github.com/juliabiro/kubectl_mux
 
+# gcloud cloud-sql-proxy
+set -gx PATH ~/cloud-sql-proxy $PATH
+
 #set -x AWS_CREDENTIAL_FILE $HOME/.aws/credentials
 
 #kubectl config use-context minikube
