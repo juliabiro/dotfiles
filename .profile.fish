@@ -20,7 +20,7 @@ set -x PATH $PATH /Applications/
 set -x PATH $PATH /$HOME/go/src/github.com/juliabiro/kubectl_mux
 
 # gcloud cloud-sql-proxy
-set -gx PATH ~/cloud-sql-proxy $PATH
+set -gx PATH /opt/homebrew/share/google-cloud-sdk/bin/ $PATH
 
 #set -x AWS_CREDENTIAL_FILE $HOME/.aws/credentials
 
@@ -32,6 +32,8 @@ set -x EDITOR emacsclient
 kubectl config use-context gke_kombo-staging_europe-west4-a_kombo-cluster-euw4
 
 set -x KUBEBUILDER_ASSETS /usr/local/share/kubebuilder
+
+source ~/.config/fish/conf.d/fnm.fish # Load fnm
 
 set -x LANG en_US
 # source credentials

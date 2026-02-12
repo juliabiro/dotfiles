@@ -24,7 +24,8 @@ alias em="emacsclient"
 alias sed="gsed"
 alias find='gfind'
 alias kctl='kubectl'
-alias k='kubectl'
+alias gt='git town'
+alias sw='kctl config use-context'
 #alias k='kubectl_context'
 alias pfw='kubectl port-forward'
 
