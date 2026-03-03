@@ -26,10 +26,10 @@ set -gx PATH /opt/homebrew/share/google-cloud-sdk/bin/ $PATH
 
 #kubectl config use-context minikube
 
-set -x EDITOR emacsclient
+set -x EDITOR cursor
 #set -x  python2 /usr/bin/python
 
-kubectl config use-context gke_kombo-staging_europe-west4-a_kombo-cluster-euw4
+kubectl config use-context staging_eu
 
 set -x KUBEBUILDER_ASSETS /usr/local/share/kubebuilder
 
@@ -39,10 +39,6 @@ set -x LANG en_US
 # source credentials
 if test -e ~/.credentials.fish
     source ~/.credentials.fish
-end
-
-if test -e ~/.contentful_setup.fish
-    source ~/.contentful_setup.fish
 end
 
 if not pgrep -f notification_placer.applescript > /dev/null

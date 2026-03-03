@@ -26,6 +26,7 @@ alias find='gfind'
 alias kctl='kubectl'
 alias gt='git town'
 alias gts="git town sync"
+alias gta="git town append"
 alias ksw='kctl config use-context'
 #alias k='kubectl_context'
 alias pfw='kubectl port-forward'
