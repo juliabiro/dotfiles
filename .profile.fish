@@ -26,7 +26,7 @@ set -gx PATH /opt/homebrew/share/google-cloud-sdk/bin/ $PATH
 
 #kubectl config use-context minikube
 
-set -x EDITOR cursor
+set -x EDITOR cursor --wait
 #set -x  python2 /usr/bin/python
 
 kubectl config use-context staging_eu
