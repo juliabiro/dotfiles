@@ -371,7 +371,36 @@ called with the main worktree's path, the same contract Claude Code's
   (with-eval-after-load 'magit
     (magit-add-section-hook 'magit-status-headers-hook
                             #'magit-insert-repo-header
-                            #'magit-insert-head-branch-header)))
+                            #'magit-insert-head-branch-header))
+
+  (defvar juliabiro/magit-fallback-display-buffer-function nil)
+
+  (defun juliabiro/magit-display-buffer (buffer)
+    "Show the Magit status BUFFER at the bottom of the frame.
+Other Magit buffers keep the placement Spacemacs' purpose layer gives them."
+    (if (eq (buffer-local-value 'major-mode buffer) 'magit-status-mode)
+        (display-buffer buffer '(display-buffer-at-bottom
+                                 (inhibit-purpose . t)
+                                 (window-height . 0.5)))
+      (funcall juliabiro/magit-fallback-display-buffer-function buffer)))
+
+  (with-eval-after-load 'magit
+    (unless (eq magit-display-buffer-function #'juliabiro/magit-display-buffer)
+      (setq juliabiro/magit-fallback-display-buffer-function
+            magit-display-buffer-function))
+    (setq magit-display-buffer-function #'juliabiro/magit-display-buffer)
+    (add-hook 'after-save-hook #'magit-after-save-refresh-status t))
+
+  (defun juliabiro/magit-refresh-visible-status ()
+    "Refresh the Magit status buffers on screen, but only while Emacs is idle."
+    (when (and (current-idle-time) (> (float-time (current-idle-time)) 2))
+      (dolist (window (window-list nil 'no-minibuffer))
+        (with-current-buffer (window-buffer window)
+          (when (derived-mode-p 'magit-status-mode)
+            (magit-refresh-buffer))))))
+
+  (cancel-function-timers #'juliabiro/magit-refresh-visible-status)
+  (run-with-timer 10 10 #'juliabiro/magit-refresh-visible-status))
 
 
 
