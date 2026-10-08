@@ -359,7 +359,19 @@ called with the main worktree's path, the same contract Claude Code's
   (advice-add 'magit-worktree-checkout :after #'juliabiro/bootstrap-worktree)
   (advice-add 'magit-worktree-branch :after #'juliabiro/bootstrap-worktree)
 
-  (setq projectile-project-search-path (list juliabiro/worktree-directory)))
+  (setq projectile-project-search-path (list juliabiro/worktree-directory))
+
+  (setq magit-repository-directories
+        '(("~/kombo" . 0)
+          ("~/kombo-workspace-groups" . 0)
+          ("~/worktrees" . 1)
+          ("~/.emacs.d" . 0)
+          ("~" . 0)))
+
+  (with-eval-after-load 'magit
+    (magit-add-section-hook 'magit-status-headers-hook
+                            #'magit-insert-repo-header
+                            #'magit-insert-head-branch-header)))
 
 
 
