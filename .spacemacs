@@ -42,7 +42,7 @@ values."
      ruby
      ruby-on-rails
      rust
-     (shell :variables shell-default-shell 'ansi-term
+     (shell :variables shell-default-shell 'eat
             shell-default-position 'bottom
             shell-default-height 35
             shell-default-full-span nil)
@@ -277,7 +277,10 @@ you should place your code here."
   (setq claude-code-ide-use-side-window nil)
   (setq claude-code-ide-terminal-backend 'eat)
   (setq claude-code-ide-show-backend-recommendation nil)
+  (setq claude-code-ide-prevent-reflow-glitch nil)
   (evil-set-initial-state 'eat-mode 'insert)
+  (with-eval-after-load 'which-key
+    (setq which-key-replacement-alist (delete-dups which-key-replacement-alist)))
 
   (defvar juliabiro/claude-code-ide-scroll-lines 5)
 
@@ -297,6 +300,34 @@ it scrolls its own transcript in response to mouse reports."
     (interactive)
     (juliabiro/claude-code-ide-send-wheel 65))
 
+  (defun juliabiro/claude-code-ide-paste ()
+    "Paste the clipboard into the Claude Code TUI.
+An image-only clipboard is pasted by sending ^V, Claude Code's paste-image key,
+which `C-v' no longer reaches; anything else is yanked as text."
+    (interactive)
+    (let ((types (shell-command-to-string "osascript -e 'clipboard info'")))
+      (if (and (string-match-p "PNGf\\|TIFF" types)
+               (not (string-match-p "string\\|utf8\\|Unicode text" types)))
+          (eat-term-send-string eat-terminal "\C-v")
+        (eat-yank))))
+
+  (defun juliabiro/claude-code-ide-paste-dropped-files (fn window urls action)
+    "Paste dropped file paths into a Claude Code TUI instead of visiting them.
+Calls FN (`dnd-handle-multiple-urls') for every other window and for non-file URLs."
+    (let* ((buffer (and (windowp window) (window-buffer window)))
+           (paths (delq nil (mapcar (lambda (url) (dnd-get-local-file-name url t)) urls))))
+      (if (and paths
+               (= (length paths) (length urls))
+               (claude-code-ide--session-buffer-p buffer))
+          (with-current-buffer buffer
+            (eat-term-send-string-as-yank
+             eat-terminal (mapconcat #'shell-quote-argument paths " "))
+            'private)
+        (funcall fn window urls action))))
+
+  (advice-add 'dnd-handle-multiple-urls :around
+              #'juliabiro/claude-code-ide-paste-dropped-files)
+
   (defvar juliabiro/claude-code-ide-mode-map
     (let ((map (make-sparse-keymap)))
       (define-key map (kbd "M-v") #'juliabiro/claude-code-ide-scroll-up)
@@ -305,7 +336,7 @@ it scrolls its own transcript in response to mouse reports."
       (define-key map (kbd "S-<next>") #'juliabiro/claude-code-ide-scroll-down)
       ;; Plain `yank' would insert into the terminal buffer's own text rather
       ;; than hand the string to the process.
-      (define-key map (kbd "s-v") #'eat-yank)
+      (define-key map (kbd "s-v") #'juliabiro/claude-code-ide-paste)
       map))
 
   (define-minor-mode juliabiro/claude-code-ide-mode
@@ -314,8 +345,94 @@ Eat shares `eat-semi-char-mode-map' between all of its buffers, so these
 keys live in a minor mode to keep them out of unrelated eat terminals."
     :keymap juliabiro/claude-code-ide-mode-map)
 
+  (defun juliabiro/eat-send-backspace ()
+    "Send ^H, which these terminals treat as backspace; they ignore eat's DEL."
+    (interactive)
+    (eat-term-send-string eat-terminal "\C-h"))
+
+  ;; Evil's insert-state C-w edits the eat buffer's text, which the TUI never sees.
+  (with-eval-after-load 'eat
+    (evil-define-key 'insert eat-mode-map (kbd "C-w") #'eat-self-input)
+    (evil-define-key 'insert eat-mode-map (kbd "DEL") #'juliabiro/eat-send-backspace)
+    (evil-define-key 'insert eat-mode-map (kbd "<backspace>") #'juliabiro/eat-send-backspace))
+
   (defun juliabiro/claude-code-ide-bind-terminal-keys ()
     (juliabiro/claude-code-ide-mode 1))
+
+  (defun juliabiro/claude-code-ide-token-at (position)
+    "Return the whitespace- and bracket-delimited text at POSITION, or \"\"."
+    (save-excursion
+      (goto-char position)
+      (if (or (eobp) (looking-at-p "[][ \t\n()<>\"'`,;]"))
+          ""
+        (let ((delimiters "^][ \t\n()<>\"'`,;"))
+          (skip-chars-backward delimiters (line-beginning-position))
+          (let ((start (point)))
+            (skip-chars-forward delimiters (line-end-position))
+            (string-trim-right (buffer-substring-no-properties start (point))
+                               "[.:,]+"))))))
+
+  (defun juliabiro/claude-code-ide-link-target (token)
+    "Return (url URL) or (file PATH LINE) for TOKEN printed by Claude Code.
+Relative paths resolve against the session's working directory."
+    (cond
+     ((string-match-p "\\`https?://" token) (list 'url token))
+     ((string-match
+       "\\`\\(.+?\\)\\(?:#L\\|:\\)\\([0-9]+\\)\\(?:[-:]L?[0-9]+\\)*\\'" token)
+      (list 'file (expand-file-name (match-string 1 token))
+            (string-to-number (match-string 2 token))))
+     (t (list 'file (expand-file-name token) nil))))
+
+  (defun juliabiro/claude-code-ide-open-link-at (position)
+    "Open the URL or file:line named by the terminal text at POSITION."
+    (let* ((token (juliabiro/claude-code-ide-token-at position))
+           (target (and (not (string-empty-p token))
+                        (juliabiro/claude-code-ide-link-target token))))
+      (pcase target
+        ('nil (message "No link here"))
+        (`(url ,url) (browse-url url))
+        (`(file ,path ,line)
+         (if (file-exists-p path)
+             (progn (find-file-other-window path)
+                    (when line
+                      (goto-char (point-min))
+                      (forward-line (1- line))))
+           (message "No such file: %s" path))))))
+
+  (defun juliabiro/claude-code-ide-open-link-at-point ()
+    (interactive)
+    (juliabiro/claude-code-ide-open-link-at (point)))
+
+  (defun juliabiro/claude-code-ide-openable-p (token)
+    "Non-nil if TOKEN is a URL or names an existing file."
+    (let ((target (and (not (string-empty-p token))
+                       (juliabiro/claude-code-ide-link-target token))))
+      (and target (or (eq (car target) 'url) (file-exists-p (cadr target))))))
+
+  (defun juliabiro/claude-code-ide-click-opens-links (original n &optional event)
+    "Open the link under a plain left click; pass everything else to ORIGINAL.
+Eat sends every click to the terminal program through `eat-self-input'."
+    (let* ((event (or event last-command-event))
+           (start (and (consp event) (event-start event)))
+           (window (and start (posn-window start)))
+           (position (and start (posn-point start)))
+           (modifiers (and window (event-modifiers event))))
+      (if (and (windowp window) (integerp position)
+               (eq (event-basic-type event) 'mouse-1)
+               (not (seq-difference modifiers '(click down)))
+               (with-current-buffer (window-buffer window)
+                 (and (bound-and-true-p juliabiro/claude-code-ide-mode)
+                      (juliabiro/claude-code-ide-openable-p
+                       (juliabiro/claude-code-ide-token-at position)))))
+          (when (memq 'click modifiers)
+            (with-current-buffer (window-buffer window)
+              (juliabiro/claude-code-ide-open-link-at position)))
+        (funcall original n event))))
+
+  (advice-add 'eat-self-input :around #'juliabiro/claude-code-ide-click-opens-links)
+
+  (define-key juliabiro/claude-code-ide-mode-map (kbd "C-c C-o")
+              #'juliabiro/claude-code-ide-open-link-at-point)
 
   (with-eval-after-load 'claude-code-ide
     (claude-code-ide-emacs-tools-setup)
@@ -400,7 +517,58 @@ Other Magit buffers keep the placement Spacemacs' purpose layer gives them."
             (magit-refresh-buffer))))))
 
   (cancel-function-timers #'juliabiro/magit-refresh-visible-status)
-  (run-with-timer 10 10 #'juliabiro/magit-refresh-visible-status))
+  (run-with-timer 10 10 #'juliabiro/magit-refresh-visible-status)
+
+  (defun juliabiro/uniquify-dirname-with-branch (dirname)
+    "Append DIRNAME's git branch to its last component, for buffer names."
+    (let ((branch (ignore-errors
+                    (let ((default-directory (file-name-as-directory dirname)))
+                      (magit-get-current-branch)))))
+      (if branch
+          (concat dirname "@" (string-replace "/" "-" branch))
+        dirname)))
+
+  (setq uniquify-dirname-transform #'juliabiro/uniquify-dirname-with-branch)
+
+  (defun juliabiro/name-buffer-with-branch ()
+    "Rename the file buffer to NAME<DIR@BRANCH>, which uniquify only does on a name collision."
+    (when (and buffer-file-name (not (string-suffix-p ">" (buffer-name))))
+      (rename-buffer
+       (format "%s<%s>"
+               (file-name-nondirectory buffer-file-name)
+               (file-name-nondirectory
+                (juliabiro/uniquify-dirname-with-branch
+                 (directory-file-name (file-name-directory buffer-file-name)))))
+       t)))
+
+  (add-hook 'find-file-hook #'juliabiro/name-buffer-with-branch)
+
+  (put 'hcl-indent-level 'safe-local-variable #'integerp)
+
+  (defvar juliabiro/treemacs-projects
+    '("~/kombo" "~/kombo-workspace-groups" "~/worktrees"))
+
+  (defun juliabiro/treemacs-add-projects ()
+    "Add `juliabiro/treemacs-projects' to the workspace; known or missing ones are skipped."
+    (dolist (path juliabiro/treemacs-projects)
+      (treemacs-do-add-project-to-workspace
+       (expand-file-name path) (file-name-nondirectory path))))
+
+  (add-hook 'treemacs-post-buffer-init-hook #'juliabiro/treemacs-add-projects)
+
+  (defvar juliabiro/magit-status-keys
+    '(("?" "all keys") ("c" "commit") ("P" "push") ("F" "pull") ("f" "fetch")
+      ("s" "stage") ("u" "unstage") ("x" "discard") ("b" "branch") ("l" "log")
+      ("r" "rebase") ("z" "stash") ("Z" "worktree") ("q" "quit")))
+
+  (defun juliabiro/magit-status-show-keys ()
+    "Keep the main Magit status keys on screen in the header line."
+    (setq-local header-line-format
+                (mapconcat (lambda (key)
+                             (concat (propertize (car key) 'face 'bold) " " (cadr key)))
+                           juliabiro/magit-status-keys "  ")))
+
+  (add-hook 'magit-status-mode-hook #'juliabiro/magit-status-show-keys))
 
 
 
@@ -443,7 +611,7 @@ This function is called at the very end of Spacemacs initialization."
                  evil-tutor evil-unimpaired evil-visual-mark-mode evil-visualstar
                  expand-region eyebrowse fancy-battery feature-mode fish-mode
                  flycheck-bashate flycheck-credo flycheck-elsa flycheck-package
-                 flycheck-pos-tip flyspell-correct-helm gh-md git-link
+                 flycheck-pos-tip flyspell-correct-helm gh-md ghostel git-link
                  git-messenger git-modes git-timemachine gitignore-templates
                  gnuplot go-eldoc go-fill-struct go-gen-test go-guru go-impl
                  go-rename go-tag godoctor golden-ratio google-translate
