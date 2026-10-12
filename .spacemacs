@@ -477,7 +477,11 @@ This function is called at the very end of Spacemacs initialization."
                  treemacs-projectile typescript-mode typit undo-tree unfill
                  vi-tilde-fringe vimrc-mode volatile-highlights web-beautify
                  web-mode wgrep winum writeroom-mode ws-butler yaml-mode yapfify
-                 yasnippet-snippets zenburn-theme)))
+                 yasnippet-snippets zenburn-theme))
+   '(safe-local-variable-values
+     '((hcl-indent-level . 2) (typescript-backend . tide) (typescript-backend . lsp)
+       (javascript-backend . tide) (javascript-backend . tern)
+       (javascript-backend . lsp))))
   (custom-set-faces
    ;; custom-set-faces was added by Custom.
    ;; If you edit it by hand, you could mess it up, so be careful.
