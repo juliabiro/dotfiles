@@ -350,9 +350,18 @@ keys live in a minor mode to keep them out of unrelated eat terminals."
     (interactive)
     (eat-term-send-string eat-terminal "\C-h"))
 
+  (defun juliabiro/eat-send-delete-word ()
+    "Send ^W so the TUI deletes the previous word."
+    (interactive)
+    (eat-term-send-string eat-terminal "\C-w"))
+
+  (with-eval-after-load 'evil-escape
+    (add-to-list 'evil-escape-excluded-major-modes 'ghostel-mode))
+
   ;; Evil's insert-state C-w edits the eat buffer's text, which the TUI never sees.
   (with-eval-after-load 'eat
     (evil-define-key 'insert eat-mode-map (kbd "C-w") #'eat-self-input)
+    (evil-define-key 'insert eat-mode-map (kbd "s-w") #'juliabiro/eat-send-delete-word)
     (evil-define-key 'insert eat-mode-map (kbd "DEL") #'juliabiro/eat-send-backspace)
     (evil-define-key 'insert eat-mode-map (kbd "<backspace>") #'juliabiro/eat-send-backspace))
 
