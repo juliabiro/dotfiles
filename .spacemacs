@@ -61,7 +61,8 @@ values."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '(groovy-mode
+   dotspacemacs-additional-packages '(ghostel
+                                      groovy-mode
                                       org-autolist
                                       org-pretty-tags)
    ;; A list of packages and/or extensions that will not be install and loaded.
@@ -148,13 +149,6 @@ values."
    ;; works in the GUI. (default nil)
    dotspacemacs-distinguish-gui-tab nil
    ;; (Not implemented) dotspacemacs-distinguish-gui-ret nil
-   ;; The command key used for Evil commands (ex-commands) and
-   ;; Emacs commands (M-x).
-   ;; By default the command key is `:' so ex-commands are executed like in Vim
-   ;; with `:' and Emacs commands are executed with `<leader> :'.
-   dotspacemacs-command-key ":"
-   ;; If non nil `Y' is remapped to `y$'. (default t)
-   dotspacemacs-remap-Y-to-y$ t
    ;; Name of the default layout (default "Default")
    dotspacemacs-default-layout-name "Default"
    ;; If non nil the default layout name is displayed in the mode-line.
@@ -170,14 +164,6 @@ values."
    dotspacemacs-auto-save-file-location 'cache
    ;; Maximum number of rollback slots to keep in the cache. (default 5)
    dotspacemacs-max-rollback-slots 5
-   ;; If non nil, `helm' will try to minimize the space it uses. (default nil)
-   dotspacemacs-helm-resize nil
-   ;; if non nil, the helm header is hidden when there is only one source.
-   ;; (default nil)
-   dotspacemacs-helm-no-header nil
-   ;; define the position to display `helm', options are `bottom', `top',
-   ;; `left', or `right'. (default 'bottom)
-   dotspacemacs-helm-position 'bottom
    ;; If non nil the paste transient-state is enabled. When enabled pressing `p`
    ;; several times cycle between the kill ring content. (default nil)
    dotspacemacs-enable-paste-transient-state nil
@@ -365,7 +351,8 @@ keys live in a minor mode to keep them out of unrelated eat terminals."
     (evil-define-key 'insert eat-mode-map (kbd "C-w") #'eat-self-input)
     (evil-define-key 'insert eat-mode-map (kbd "s-w") #'juliabiro/eat-send-delete-word)
     (evil-define-key 'insert eat-mode-map (kbd "DEL") #'juliabiro/eat-send-backspace)
-    (evil-define-key 'insert eat-mode-map (kbd "<backspace>") #'juliabiro/eat-send-backspace))
+    (evil-define-key 'insert eat-mode-map (kbd "<backspace>") #'juliabiro/eat-send-backspace)
+    (set-face-attribute 'eat-term-faint nil :foreground "#6b6b6b"))
 
   (defun juliabiro/claude-code-ide-bind-terminal-keys ()
     (juliabiro/claude-code-ide-mode 1))
