@@ -267,6 +267,8 @@ you should place your code here."
   (setq claude-code-ide-show-backend-recommendation nil)
   (setq claude-code-ide-prevent-reflow-glitch nil)
   (evil-set-initial-state 'eat-mode 'insert)
+  (unless standard-display-table (setq standard-display-table (make-display-table)))
+  (aset standard-display-table ?⏺ [?●])
   (with-eval-after-load 'which-key
     (setq which-key-replacement-alist (delete-dups which-key-replacement-alist)))
 
