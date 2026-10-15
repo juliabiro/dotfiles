@@ -351,9 +351,13 @@ keys live in a minor mode to keep them out of unrelated eat terminals."
   ;; Evil's insert-state C-w edits the eat buffer's text, which the TUI never sees.
   (with-eval-after-load 'eat
     (evil-define-key 'insert eat-mode-map (kbd "C-w") #'eat-self-input)
+    (evil-define-key 'insert eat-mode-map (kbd "C-u") #'eat-self-input)
     (evil-define-key 'insert eat-mode-map (kbd "s-w") #'juliabiro/eat-send-delete-word)
     (evil-define-key 'insert eat-mode-map (kbd "DEL") #'juliabiro/eat-send-backspace)
     (evil-define-key 'insert eat-mode-map (kbd "<backspace>") #'juliabiro/eat-send-backspace)
+    (evil-define-key 'insert eat-mode-map (kbd "s-v") #'juliabiro/claude-code-ide-paste)
+    (evil-define-key 'normal eat-mode-map (kbd "s-v") #'juliabiro/claude-code-ide-paste)
+    (evil-define-key 'normal eat-mode-map (kbd "p") #'juliabiro/claude-code-ide-paste)
     (set-face-attribute 'eat-term-faint nil :foreground "#6b6b6b"))
 
   (defun juliabiro/claude-code-ide-bind-terminal-keys ()
