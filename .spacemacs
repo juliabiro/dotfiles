@@ -358,6 +358,7 @@ keys live in a minor mode to keep them out of unrelated eat terminals."
     (evil-define-key 'insert eat-mode-map (kbd "s-v") #'juliabiro/claude-code-ide-paste)
     (evil-define-key 'normal eat-mode-map (kbd "s-v") #'juliabiro/claude-code-ide-paste)
     (evil-define-key 'normal eat-mode-map (kbd "p") #'juliabiro/claude-code-ide-paste)
+    (evil-define-key '(insert normal) eat-mode-map (kbd "C-<escape>") #'claude-code-ide-send-escape)
     (set-face-attribute 'eat-term-faint nil :foreground "#6b6b6b"))
 
   (defun juliabiro/claude-code-ide-bind-terminal-keys ()
